@@ -2,7 +2,7 @@
 # VARIABLES
 # ===============================
 DC=docker compose
-APP_SERVICE=fx-importer-app
+APP_SERVICE=fx-importer
 DB_SERVICE=fx_postgres
 VOLUME=postgres_data
 
@@ -33,7 +33,7 @@ clean: down-volumes
 logs:
 	@$(DC) logs -f
 
-logs-app:make
+logs-app:
 	@$(DC) logs -f $(APP_SERVICE)
 
 logs-db:
