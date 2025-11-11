@@ -2,7 +2,7 @@
 # VARIABLES
 # ===============================
 DC=docker compose
-APP_SERVICE=fx-importer_app
+APP_SERVICE=fx-importer-app
 DB_SERVICE=fx_postgres
 VOLUME=postgres_data
 
@@ -46,7 +46,7 @@ shell-app:
 	@$(DC) exec $(APP_SERVICE) sh
 
 shell-db:
-	@$(DC) exec $(DB_SERVICE) psql -U fxuser -d deals_db
+	@$(DC) exec $(DB_SERVICE) psql -U user -d deals_db
 
 # ===============================
 # RESTART

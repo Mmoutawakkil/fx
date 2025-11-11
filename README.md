@@ -16,8 +16,8 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/fx-importer.git
-cd fx-importer
+git clone https://github.com/Mmoutawakkil/fx.git
+cd fx
 ```
 
 2. Start the application
