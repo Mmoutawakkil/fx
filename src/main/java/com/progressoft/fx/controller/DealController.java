@@ -1,8 +1,10 @@
 package com.progressoft.fx.controller;
 
+import com.progressoft.fx.constant.SaveResult;
 import com.progressoft.fx.dto.request.DealRequest;
 import com.progressoft.fx.model.Deal;
 import com.progressoft.fx.repository.DealRepository;
+import com.progressoft.fx.service.DealService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,7 +25,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DealController {
     private final DealRepository dealRepository;
+    private final DealService dealService;
 
+    /**
+     * Single import endpoint – accepts one deal and saves it.
+     */
     @PostMapping
     @Transactional(noRollbackFor = Exception.class)
     public ResponseEntity<?> saveDeal(@Valid @RequestBody DealRequest request) {
@@ -35,16 +40,9 @@ public class DealController {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("Row with ID " + request.getDealUniqueId() + " already exists");
             }
-            Deal deal = Deal.builder()
-                    .dealUniqueId(request.getDealUniqueId())
-                    .fromCurrency(request.getFromCurrency())
-                    .toCurrency(request.getToCurrency())
-                    .dealTimestamp(OffsetDateTime.parse(request.getDealTimestamp()))
-                    .amount(request.getAmount())
-                    .build();
-            Deal saved = dealRepository.save(deal);
-            log.info("Saved row {}", saved.getDealUniqueId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+            SaveResult saveResult = dealService.saveDeal(request);
+            log.info("Saved row {}", request.getDealUniqueId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(saveResult);
         } catch (DataIntegrityViolationException e) {
             log.error("Data integrity violation: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data format or constraint violation.");
@@ -69,14 +67,7 @@ public class DealController {
                     duplicates++;
                     continue;
                 }
-                Deal deal = Deal.builder()
-                        .dealUniqueId(req.getDealUniqueId())
-                        .fromCurrency(req.getFromCurrency())
-                        .toCurrency(req.getToCurrency())
-                        .dealTimestamp(OffsetDateTime.parse(req.getDealTimestamp()))
-                        .amount(req.getAmount())
-                        .build();
-                dealRepository.save(deal);
+                dealService.saveDeal(req);
                 imported++;
             } catch (Exception e) {
                 log.error("Failed to import row {}: {}", req.getDealUniqueId(), e.getMessage());
