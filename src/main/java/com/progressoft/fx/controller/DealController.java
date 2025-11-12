@@ -31,7 +31,6 @@ public class DealController {
      * Single import endpoint – accepts one deal and saves it.
      */
     @PostMapping
-    @Transactional(noRollbackFor = Exception.class)
     public ResponseEntity<?> saveDeal(@Valid @RequestBody DealRequest request) {
         log.info("Received FX rows request: {}", request);
         try {
@@ -56,7 +55,6 @@ public class DealController {
      * Bulk import endpoint – accepts multiple deals and saves them independently (no rollback).
      */
     @PostMapping("/bulk")
-    @Transactional(noRollbackFor = Exception.class)
     public ResponseEntity<?> bulkImport(@Valid @RequestBody List<DealRequest> requests) {
         log.info("Bulk import of {} deals", requests.size());
         int imported = 0;

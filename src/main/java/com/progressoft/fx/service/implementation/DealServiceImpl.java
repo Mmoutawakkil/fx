@@ -23,7 +23,7 @@ public class DealServiceImpl implements DealService {
     private final Logger log = LoggerFactory.getLogger(DealServiceImpl.class);
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public SaveResult saveDeal(DealRequest req) {
         OffsetDateTime ts;
         try {
